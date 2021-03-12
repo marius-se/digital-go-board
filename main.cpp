@@ -37,8 +37,12 @@ private:
 
 // Entry point - main
 int main() {
-    const TerminalRenderer &terminalRenderer{};
-    const GoGameManager goGameManager(terminalRenderer);
+    // if development {
+        const TerminalRenderer &renderer{};
+    // else {
+        // const EPaperRenderer &renderer{};
+    // }
+    const GoGameManager goGameManager(renderer);
 
     goGameManager.makeMove(1,2);
 }
