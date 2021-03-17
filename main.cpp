@@ -1,48 +1,86 @@
 #include <iostream>
+#include <array>
 
-class Goban { };
+struct Coordinate { uint x; uint y; };
+enum Stone { none, black, white };
 
-// Renderer
-class Renderer {
+class Goban {
 public:
-    ~Renderer();
-    virtual void render(const Goban& goban) const = 0;
+    Goban() {
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                state[i][j] = none;
+            }
+        }
+    }
+
+    void setStone(const Coordinate targetCoordinate, const Stone stone) {
+        state[targetCoordinate.y - 1][targetCoordinate.x - 1] = stone;
+    }
+
+    Stone getStone(const Coordinate coordinate) {
+        return state[coordinate.y - 1][coordinate.x - 1];
+    }
+
+    auto getCurrentState() const {
+        return state;
+    }
+private:
+    std::array<std::array<Stone, 19>, 19> state;
 };
 
-class TerminalRenderer : public Renderer {
-public:
-    TerminalRenderer() {}
-    ~TerminalRenderer() {}
+// Renderer
+struct Renderer { virtual void render(const Goban& goban) const = 0; };
 
+struct TerminalRenderer : Renderer {
     void render(const Goban& goban) const override {
-        std::cout << "Printing current Goban";
+        const auto currentGobanState = goban.getCurrentState();
+        std::cout << "###########" << std::endl;
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                switch (currentGobanState[i][j]) {
+                    case none:
+                        std::cout << '0';
+                        break;
+                    case black:
+                        std::cout << 'b';
+                        break;
+                    case white:
+                        std::cout << 'w';
+                        break;
+                }
+                std::cout << ' ';
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "###########" << std::endl;
     }
 };
 
 // GoGameManager
 class GoGameManager {
 public:
-    GoGameManager() = default;
-    GoGameManager(const Renderer& renderer) :renderer{}, goban{} {}
+    GoGameManager(Renderer* renderer) : renderer(renderer), goban{} {}
 
-    bool makeMove(int x, int y) const {
-        // move logic... then:
-        renderer.render(goban);
+    void start() {
+        renderer->render(goban);
+    }
+
+    bool makeMove(const Coordinate targetCoordinate, const Stone stone) {
+        goban.setStone(targetCoordinate, stone);
+        renderer->render(goban);
         return true;
     }
 private:
     Goban goban;
-    Renderer renderer;
+    Renderer* renderer;
 };
 
 // Entry point - main
 int main() {
-    // if development {
-        const TerminalRenderer &renderer{};
-    // else {
-        // const EPaperRenderer &renderer{};
-    // }
-    const GoGameManager goGameManager(renderer);
+    TerminalRenderer renderer{};
+    GoGameManager goGameManager(&renderer);
 
-    goGameManager.makeMove(1,2);
+    goGameManager.start();
+    //goGameManager.makeMove({10,10}, black);
 }
