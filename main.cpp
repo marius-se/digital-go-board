@@ -1,48 +1,36 @@
-#include <iostream>
+#include "iostream"
+#include "array"
 
-class Goban { };
-
-// Renderer
-class Renderer {
-public:
-    ~Renderer();
-    virtual void render(const Goban& goban) const = 0;
-};
-
-class TerminalRenderer : public Renderer {
-public:
-    TerminalRenderer() {}
-    ~TerminalRenderer() {}
-
-    void render(const Goban& goban) const override {
-        std::cout << "Printing current Goban";
-    }
-};
+#include "Renderer/Renderer.h"
+#include "Renderer/TerminalRenderer.h"
+//#include "Renderer/EPaperRenderer.h"
+#include "Goban.h"
 
 // GoGameManager
 class GoGameManager {
 public:
-    GoGameManager() = default;
-    GoGameManager(const Renderer& renderer) :renderer{}, goban{} {}
+    GoGameManager(Renderer* renderer) : renderer(renderer), goban{} {}
 
-    bool makeMove(int x, int y) const {
-        // move logic... then:
-        renderer.render(goban);
+    void start() {
+        renderer->render(goban);
+    }
+
+    bool makeMove(const Coordinate targetCoordinate, const Stone stone) {
+        goban.setStone(targetCoordinate, stone);
+        renderer->render(goban);
         return true;
     }
 private:
     Goban goban;
-    Renderer renderer;
+    Renderer* renderer;
 };
 
 // Entry point - main
 int main() {
-    // if development {
-        const TerminalRenderer &renderer{};
-    // else {
-        // const EPaperRenderer &renderer{};
-    // }
-    const GoGameManager goGameManager(renderer);
+    TerminalRenderer renderer{};
 
-    goGameManager.makeMove(1,2);
+    GoGameManager goGameManager(&renderer);
+
+    goGameManager.start();
+    goGameManager.makeMove({10,10}, black);
 }
