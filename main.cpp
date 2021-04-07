@@ -3,11 +3,19 @@
 
 #include "Renderer/Renderer.h"
 #include "Renderer/TerminalRenderer.h"
+
+#include "InputDevice.h"
+
 //#include "Renderer/EPaperRenderer.h"
 #include "Goban.h"
 
 // GoGameManager
 class GoGameManager {
+private:
+    Goban goban;
+    Renderer* renderer;
+    Keyboard keyboardInput;
+
 public:
     GoGameManager(Renderer* renderer) : renderer(renderer), goban{} {}
 
@@ -20,9 +28,16 @@ public:
         renderer->render(goban);
         return true;
     }
-private:
-    Goban goban;
-    Renderer* renderer;
+
+    void makeMove(const Stone stone) {
+        Coordinate targetCoordinate;
+        keyboardInput.waitForInput(targetCoordinate);
+        if(targetCoordinate.isValid()) {
+            goban.setStone(targetCoordinate, stone);
+            renderer->render(goban);
+        }
+    }
+
 };
 
 // Entry point - main
@@ -32,5 +47,6 @@ int main() {
     GoGameManager goGameManager(&renderer);
 
     goGameManager.start();
+    goGameManager.makeMove(white);
     goGameManager.makeMove({10,10}, black);
 }
