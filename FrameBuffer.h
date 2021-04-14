@@ -8,7 +8,8 @@ extern "C" {
 class FrameBuffer {
 public:
     uint8_t* frameBuffer;
-    FrameBuffer(size_t size, uint8_t bitsPerPixel);
+    uint8_t bitsPerPixel;
+    FrameBuffer(size_t size, uint8_t bitsPerPixel, uint16_t width, uint16_t height);
     ~FrameBuffer();
     void drawLine(
             uint16_t startX,

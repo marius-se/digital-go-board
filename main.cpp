@@ -40,7 +40,7 @@ public:
 
 // Entry point - main
 int main() {
-    EPaperRenderer renderer{1.48};
+    EPaperRenderer renderer{1.48, 120};
 
     GoGameManager goGameManager(&renderer);
 

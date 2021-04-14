@@ -4,21 +4,32 @@
 
 #include "EPaperRenderer.h"
 
-EPaperRenderer::EPaperRenderer(const double ePaperVCOM) :ePaperDisplay(EPaperDisplay(ePaperVCOM)) {
+EPaperRenderer::EPaperRenderer(double vcom, uint16_t stoneSize) :ePaperDisplay(EPaperDisplay(vcom)), stoneSize{stoneSize} {
     ePaperDisplay.connect();
     ePaperDisplay.clearAndRefresh();
-}
-
-void EPaperRenderer::render(const Goban &goban) const {
-    auto frameBuffer = ePaperDisplay.createFrameBuffer();
-    frameBuffer.drawLine(0, 0, 800, 800, BLACK, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-    ePaperDisplay.refresh(frameBuffer.frameBuffer);
+    drawEmptyGoBoard(9);
 }
 
 EPaperRenderer::~EPaperRenderer() { }
 
-EPaperRenderer::EPaperRenderer(EPaperDisplay ePaperDisplay) : ePaperDisplay(ePaperDisplay) {
-    ePaperDisplay.connect();
+void EPaperRenderer::render(const Goban &goban) const {
+    //auto frameBuffer = ePaperDisplay.createFrameBuffer(4);
+    //frameBuffer.drawLine(0, 0, 8, 8, BLACK, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+    //ePaperDisplay.refresh(frameBuffer.frameBuffer, frameBuffer.bitsPerPixel);
+}
+
+void EPaperRenderer::drawEmptyGoBoard(uint16_t gameSize) {
+    const uint16_t boardSizeInPixel = (gameSize - 1) * stoneSize;
+    const uint16_t startPointX = (ePaperDisplay.getDisplayWidth() / 2) - (boardSizeInPixel / 2);
+    const uint16_t startPointY = (ePaperDisplay.getDisplayHeight() / 2) - (boardSizeInPixel / 2);
+    FrameBuffer frameBuffer = ePaperDisplay.createFrameBuffer(4);
+    for (int x = 0; x <= boardSizeInPixel; x += stoneSize) {
+        frameBuffer.drawLine(startPointX + x, startPointY, startPointX + x, startPointY + boardSizeInPixel, BLACK, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+    }
+    for (int y = 0; y <= boardSizeInPixel; y += stoneSize) {
+        frameBuffer.drawLine(startPointX, startPointY + y, startPointX + boardSizeInPixel, startPointY + y, BLACK, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+    }
+    ePaperDisplay.refresh(frameBuffer.frameBuffer, frameBuffer.bitsPerPixel);
 }
 
 /*

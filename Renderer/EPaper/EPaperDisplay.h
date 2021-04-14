@@ -22,8 +22,11 @@ public:
     ~EPaperDisplay();
     void connect();
     void clearAndRefresh() const;
-    FrameBuffer createFrameBuffer() const;
-    void refresh(uint8_t* frameBuffer) const;
+    FrameBuffer createFrameBuffer(uint8_t bitsPerPixel) const;
+    void refresh(uint8_t* frameBuffer, uint8_t bitsPerPixel) const;
+
+    uint16_t getDisplayWidth() const;
+    uint16_t getDisplayHeight() const;
 };
 
 

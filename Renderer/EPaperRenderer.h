@@ -8,11 +8,11 @@
 class EPaperRenderer : public Renderer {
 private:
     EPaperDisplay ePaperDisplay;
+    uint16_t stoneSize;
+
+    void drawEmptyGoBoard(uint16_t gameSize);
 public:
-    EPaperRenderer(const double ePaperVCOM);
-
-    EPaperRenderer(EPaperDisplay ePaperDisplay);
-
+    EPaperRenderer(double vcom, uint16_t stoneSize);
     ~EPaperRenderer();
     void render(const Goban &goban) const override;
 };

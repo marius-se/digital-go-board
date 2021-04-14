@@ -30,10 +30,9 @@ uint8_t EPaperDisplay::getA2Mode() const {
     }
 }
 
-FrameBuffer EPaperDisplay::createFrameBuffer() const {
-    const uint8_t bitsPerPixel = 1;
+FrameBuffer EPaperDisplay::createFrameBuffer(uint8_t bitsPerPixel) const {
     const size_t size = ((it8951DeviceInfo.value().Panel_W * bitsPerPixel % 8 == 0) ? (it8951DeviceInfo.value().Panel_W * bitsPerPixel / 8 ) : (it8951DeviceInfo.value().Panel_W * bitsPerPixel / 8 + 1)) * it8951DeviceInfo.value().Panel_H;
-    return FrameBuffer(size, bitsPerPixel);
+    return FrameBuffer(size, bitsPerPixel, getDisplayWidth(), getDisplayHeight());
 }
 
 void EPaperDisplay::connect() {
@@ -51,17 +50,42 @@ void EPaperDisplay::clearAndRefresh() const {
     }
 }
 
-void EPaperDisplay::refresh(uint8_t* frameBuffer) const {
+void EPaperDisplay::refresh(uint8_t* frameBuffer, uint8_t bitsPerPixel) const {
     if (it8951DeviceInfo) {
-        EPD_IT8951_1bp_Refresh(
-                frameBuffer,
-                0,
-                0,
-                it8951DeviceInfo->Panel_W,
-                it8951DeviceInfo->Panel_H,
-                getA2Mode(),
-                getMemoryAddress(),
-                false
+        switch (bitsPerPixel) {
+            case 1:
+                EPD_IT8951_1bp_Refresh(
+                        frameBuffer,
+                        0,
+                        0,
+                        getDisplayWidth(),
+                        getDisplayHeight(),
+                        getA2Mode(),
+                        getMemoryAddress(),
+                        false
                 );
+                break;
+            case 4:
+                EPD_IT8951_4bp_Refresh(
+                        frameBuffer,
+                        0,
+                        0,
+                        getDisplayWidth(),
+                        getDisplayHeight(),
+                        false,
+                        getMemoryAddress(),
+                        false
+                        );
+            default:
+                break;
+        }
     }
+}
+
+uint16_t EPaperDisplay::getDisplayWidth() const {
+    return it8951DeviceInfo.value().Panel_W;
+}
+
+uint16_t EPaperDisplay::getDisplayHeight() const {
+    return it8951DeviceInfo.value().Panel_H;
 }

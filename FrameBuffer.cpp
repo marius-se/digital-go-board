@@ -1,8 +1,8 @@
 #include "FrameBuffer.h"
 
-FrameBuffer::FrameBuffer(size_t size, uint8_t bitsPerPixel) {
+FrameBuffer::FrameBuffer(size_t size, uint8_t bitsPerPixel, uint16_t width, uint16_t height) :bitsPerPixel{bitsPerPixel} {
     frameBuffer = new uint8_t[size]{};
-    Paint_NewImage(frameBuffer, 100, 100, 0, BLACK);
+    Paint_NewImage(frameBuffer, width, height, 0, BLACK);
     Paint_SelectImage(frameBuffer);
     Paint_SetBitsPerPixel(bitsPerPixel);
     Paint_Clear(WHITE);
