@@ -3,6 +3,7 @@ project(digital-go-board)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# EPaperDisplay
 add_library(bcm2835 STATIC IMPORTED)
 set_property(TARGET bcm2835 PROPERTY
         IMPORTED_LOCATION "/usr/local/lib/libbcm2835.a")
@@ -15,10 +16,16 @@ target_link_libraries(DEV_Config PRIVATE bcm2835)
 add_library(BCM2835Connection STATIC Renderer/EPaper/BCM2835Connection.cpp)
 target_link_libraries(BCM2835Connection PRIVATE DEV_Config)
 
+add_library(EPaperDisplay STATIC Renderer/EPaper/EPaperDisplay.cpp)
+target_link_libraries(EPaperDisplay PRIVATE BCM2835Connection EPD_IT8951)
+# ---
+
+add_library(FrameBuffer STATIC FrameBuffer.cpp)
+target_link_libraries(FrameBuffer PRIVATE GUIPaint)
 add_library(Renderer STATIC Renderer/Renderer.cpp)
 add_library(TerminalRenderer STATIC Renderer/TerminalRenderer.cpp)
 add_library(EPaperRenderer STATIC Renderer/EPaperRenderer.cpp)
-target_link_libraries(EPaperRenderer PRIVATE BCM2835Connection EPD_IT8951 GUIPaint)
+target_link_libraries(EPaperRenderer PRIVATE EPaperDisplay FrameBuffer)
 
 add_library(Coordinate STATIC Coordinate.cpp)
 add_library(Goban STATIC Goban.cpp)
