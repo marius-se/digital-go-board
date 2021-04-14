@@ -1,12 +1,10 @@
 #include "iostream"
-#include "array"
 
 #include "Renderer/Renderer.h"
-#include "Renderer/TerminalRenderer.h"
+#include "Renderer/EPaperRenderer.h"
 
 #include "InputDevice.h"
 
-//#include "Renderer/EPaperRenderer.h"
 #include "Goban.h"
 
 // GoGameManager
@@ -42,11 +40,13 @@ public:
 
 // Entry point - main
 int main() {
-    TerminalRenderer renderer{};
+    EPaperRenderer renderer{};
 
     GoGameManager goGameManager(&renderer);
 
     goGameManager.start();
     goGameManager.makeMove(white);
-    goGameManager.makeMove({10,10}, black);
+    goGameManager.makeMove(black);
+    goGameManager.makeMove(white);
+    //goGameManager.makeMove({10,10}, black);
 }

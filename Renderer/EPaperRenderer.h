@@ -1,9 +1,11 @@
 #ifndef DIGITAL_GO_BOARD_EPAPERRENDERER_H
 #define DIGITAL_GO_BOARD_EPAPERRENDERER_H
 
-
-#include "../libs/IT8951-ePaper/Config/DEV_Config.h"
-#include "../libs/IT8951-ePaper/e-Paper/EPD_IT8951.h"
+extern "C" {
+#include "../libs/IT8951/Config/DEV_Config.h"
+#include "../libs/IT8951/e-Paper/EPD_IT8951.h"
+#include "../libs/IT8951/GUI/GUI_Paint.h"
+}
 #include "Renderer.h"
 
 class EPaperRenderer : public Renderer {
@@ -17,6 +19,7 @@ private:
 
 public:
     EPaperRenderer();
+    ~EPaperRenderer();
     void render(const Goban &goban) const override;
 };
 

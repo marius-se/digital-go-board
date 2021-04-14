@@ -6,7 +6,7 @@
 #include "Coordinate.h"
 
 bool Coordinate::isValid()  {
-    if(  ((1 <= x) && (x <= 19))  &&  ((1 <= y) && (y <= 19))  ) {
+    if(  ((1 <= x) && (x <= 13))  &&  ((1 <= y) && (y <= 13))  ) {
         return true;
     }
     else {
