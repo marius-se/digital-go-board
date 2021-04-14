@@ -5,11 +5,12 @@
 #include "EPaperRenderer.h"
 
 EPaperRenderer::EPaperRenderer() {
-    //Init the BCM2835 Device
-    if(DEV_Module_Init()!=0){
-        DEV_Module_Exit();
-        throw std::runtime_error("Could not initialize bcm2835.");
-    }
+    bcm2835Connection = BCM2835Connection();
+    bcm2835Connection.connect();
+
+    // ePaperDisplay = EPaperDisplay(vcom: 1.48);
+    // ePaperDisplay.connect();
+    // ePaperDisplay.fullRefresh();
 
     const uint16_t vcom = 1.48 * 1000;
     deviceInfo = EPD_IT8951_Init(vcom);
@@ -22,7 +23,6 @@ EPaperRenderer::EPaperRenderer() {
         //10.3inch e-Paper HAT(1872,1404)
         a2Mode = 6;
     } else {
-        DEV_Module_Exit();
         EPD_IT8951_Sleep();
         throw std::runtime_error("Unsupported E Paper display.");
     }
@@ -31,8 +31,8 @@ EPaperRenderer::EPaperRenderer() {
 }
 
 void EPaperRenderer::render(const Goban &goban) const {
-    const uint16_t stoneSizeInPixel = 72;
-    const uint8_t gameSize = 13;
+    const uint16_t stoneSizeInPixel = 120;
+    const uint8_t gameSize = 9;
     const uint16_t boardSizeInPixel = (gameSize - 1) * stoneSizeInPixel;
     const uint16_t displayWidth = 1872;
     const uint16_t displayHeight = 1404;
@@ -80,7 +80,4 @@ void EPaperRenderer::render(const Goban &goban) const {
 EPaperRenderer::~EPaperRenderer() {
     EPD_IT8951_Init_Refresh(deviceInfo, initTargetMemoryAddress);
     EPD_IT8951_Sleep();
-
-    DEV_Delay_ms(5000);
-    DEV_Module_Exit();
 }

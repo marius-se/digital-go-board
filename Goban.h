@@ -9,7 +9,7 @@ enum Stone { none, black, white };
 
 class Goban {
 private:
-    std::array<std::array<Stone, 19>, 19> state;
+    std::array<std::array<Stone, 9>, 9> state;
 public:
     Goban();
     void setStone(const Coordinate targetCoordinate, const Stone stone);
